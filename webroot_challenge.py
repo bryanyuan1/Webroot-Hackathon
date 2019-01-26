@@ -93,9 +93,11 @@ while True:
     if closest_ghost:
         closest_x = str(closest_ghost['coords'][0])
         closest_y = str(closest_ghost['coords'][1])
-    else:
-        closest_x = "8000"
-        closest_y = "4500"
+        
+    # we may not use the center because we already got the patrol
+    #else:
+        #closest_x = "8000"
+        #closest_y = "4500"
     
     # HUNTER MOVEMENT #
     if closest_ghost:
@@ -104,8 +106,8 @@ while True:
             busting = True
             print("BUST " + str(closest_ghost['id']))
         elif dist_ghost < 900:
-            move_coords = best_direction(closest_ghost['coords'])
-            print("MOVE " + str(move_coords[0]) + " " + str(move_coords[1]))
+            #move_coords = best_direction(closest_ghost['coords'])
+            print("MOVE " + str(hunter['coords'][0]) + " " + str(hunter['coords'][1]))
         else:
             print("MOVE " + closest_x + " " + closest_y)
     else:
@@ -119,35 +121,45 @@ while True:
             if catcher_x <= 900 and catcher_y <= 900:
                 print("RELEASE")
             else:
-                print("MOVE 900 900")
+                print("MOVE 500 500")
         else:
-            if catcher_x == 15100 and catcher_y == 15100:
+            if catcher_x >= 15100 and catcher_y >= 8100:
                 print("RELEASE")
             else:
-                print("MOVE 15100 15100")
+                print("MOVE 15500 8500")
+    
+    #not carrying and find a ghost
     elif closest_ghost:
+        # if the hunter is still firing, i will go to hunter; if the hunter finishes firing
+        # i will go there and carry! Also, the ghost should not be in the base!
         dist_ghost = distance(catcher['coords'], closest_ghost['coords'])
         
         # closest_to_catcher =  assign_closest(catcher['coords'], ghosts)
         
-        if dist_ghost > 1000:
-            print("MOVE " + closest_x + " " + closest_y)
+        #hunter is firing
+        if closest_ghost['stamina'] > 0:
+            print("MOVE " + str(hunter['coords'][0]) + " " + str(hunter['coords'][1]))
         
-        elif not closest_ghost['stamina'] and not catcher['state'] and \
-                 ((closest_ghost['coords'][0] > 1200 and closest_ghost['coords'][1] > 1200) and \
-                  (closest_ghost['coords'][0] < 14800 and closest_ghost['coords'][1] < 14800)):
-            print("TRAP " + str(closest_ghost['id']))
-            
-        elif dist_ghost < 900:
-            move_coords = best_direction(closest_ghost['coords'])
-            print("MOVE " + str(move_coords[0]) + " " + str(move_coords[1]))
-            
-        
-            
-        else:
-            print("MOVE " + closest_x + " " + closest_y)
+        # hunter finishes
+        else: 
+            if dist_ghost > 1600:
+                print("MOVE " + closest_x + " " + closest_y)
+                
+            elif dist_ghost < 900:
+                #move_coords = best_direction(closest_ghost['coords'])
+                #just stop and the ghost runs for you
+                print("MOVE " + str(catcher['coords'][0]) + " " + str(catcher['coords'][1]))
+                
+            #this is when it is in catch range, and not in base
+            elif (not(closest_ghost['coords'][0] < 1200 and closest_ghost['coords'][1] < 1200) and \
+                      not(closest_ghost['coords'][0] > 14800 and closest_ghost['coords'][1] > 7800)):
+                print("TRAP " + str(closest_ghost['id']))
+    
+    
+    #if we don't find the ghost, go find the hunter!
     else:
-        print("MOVE " + patrol_points[current_index][0] + " " + patrol_points[current_index][1])
+        #temporary stop the patroling system for catcher
+        print("MOVE " + str(hunter['coords'][0]) + " " + str(hunter['coords'][1]))
         
         
     # SUPPORT MOVEMENT #
