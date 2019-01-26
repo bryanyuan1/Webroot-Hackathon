@@ -15,8 +15,7 @@ move_from_ghost = 0
 
 current_move = 0
 current_index = 0
-patrol_points = [('4000', '2000'), ('8000', '2000'), ('12000', '2000'), \
-                 ('10000', '6000'), ('6000', '6000'), ('2000', '6000')]
+patrol_points = [('12000', '7000'), ('14000', '6000')]
 
 # patrol_points = [(i, j) for i in range(2000, x, 2000) for j in range(2000, y, 2000)]
 
@@ -24,8 +23,8 @@ def distance(player, ghost):
     return math.sqrt(((player[1] - ghost[1]) ** 2) + ((player[0] - ghost[0]) ** 2))
 
 
-def assign_values(coords, state, value):
-    return {'coords': coords, 'state': state, 'value': value}
+def assign_values(coords, state, value, entity_id):
+    return {'coords': coords, 'state': state, 'value': value, 'id': entity_id}
     
     
 def assign_closest(player, ghosts):
@@ -52,18 +51,23 @@ def best_direction(ghost):
         return (x + 500, y)
     else:
         return (x, y + 500)
-    
+        
 
 # game loop
 while True:
     entities = int(input())  # the number of busters and ghosts visible to you
     
-    data = ['coords', 'state', 'value']
+    data = ['coords', 'state', 'value', 'id']
     ghosts = []
     
     hunter = {i: () for i in data}
     catcher = {i: () for i in data}
     support = {i: () for i in data}
+    
+    oppo_hunter = {i: () for i in data}
+    oppo_catcher = {i: () for i in data}
+    oppo_support = {i: () for i in data}
+    
     
     busting = False
     
@@ -81,11 +85,18 @@ while True:
             # ghosts.append((x, y))
         elif entity_type == my_team_id:
             if entity_role == 0:
-                hunter = assign_values((x, y), state, value)
+                hunter = assign_values((x, y), state, value, entity_id)
             elif entity_role == 1:
-                catcher = assign_values((x, y), state, value)
+                catcher = assign_values((x, y), state, value, entity_id)
             elif entity_role == 2:
-                support = assign_values((x, y), state, value)
+                support = assign_values((x, y), state, value, entity_id)
+        else:
+            if entity_role == 0:
+                oppo_hunter = assign_values((x, y), state, value, entity_id)
+            elif entity_role == 1:
+                oppo_catcher = assign_values((x, y), state, value, entity_id)
+            elif entity_role == 2:
+                oppo_support = assign_values((x, y), state, value, entity_id)
       
     closest_ghost =  assign_closest(hunter['coords'], ghosts)
     
@@ -163,13 +174,13 @@ while True:
         
         
     # SUPPORT MOVEMENT #
-    print("MOVE " + patrol_points[current_index][0] + " " + patrol_points[current_index][1])
+    print("MOVE " + str(patrol_points[current_index][0]) + " " + str(patrol_points[current_index][1]))
     
     
     current_move += 1
     
-    if current_move % 6 == 0:
-        current_index = (current_index + 1) % 6
+    if current_move % 2 == 0:
+        current_index = (current_index + 1) % 2
     
     # print(current_move, file=sys.stderr)
         
