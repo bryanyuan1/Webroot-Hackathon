@@ -15,7 +15,8 @@ move_from_ghost = 0
 
 current_move = 0
 current_index = 0
-patrol_points = [('12000', '7000'), ('14000', '6000')]
+patrol_points = [('4000', '2000'), ('8000', '2000'), ('12000', '2000'), \
+                 ('10000', '6000'), ('6000', '6000'), ('2000', '6000')]
 
 # patrol_points = [(i, j) for i in range(2000, x, 2000) for j in range(2000, y, 2000)]
 
@@ -179,8 +180,8 @@ while True:
     
     current_move += 1
     
-    if current_move % 2 == 0:
-        current_index = (current_index + 1) % 2
+    if current_move % 6 == 0:
+        current_index = (current_index + 1) % 6
     
     # print(current_move, file=sys.stderr)
         
