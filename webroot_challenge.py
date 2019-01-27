@@ -263,6 +263,19 @@ while True:
                 print("MOVE 15500 8500")
     
     #not carrying and find a ghost
+    elif closest_ghost != None and closest_ghost['stamina'] == 0:
+        dist_to_cg = distance(catcher['coords'], closest_ghost['coords'])
+        best_choice = best_direction(closest_ghost['coords'])
+        
+        if dist_to_cg > 1760:
+            print("MOVE " + str(best_choice[0]) + " " + str(best_choice[1]))
+            
+        elif dist_to_cg < 900:
+            print("MOVE " + str(best_choice[0]) + " " + str(best_choice[1]))
+        
+        else:
+            print("TRAP " + str(closest_ghost['id']))
+        
     elif closest_to_support:
         dist_to_cts = distance(catcher['coords'], closest_to_support['coords'])
         best_choice = best_direction(closest_to_support['coords'])
