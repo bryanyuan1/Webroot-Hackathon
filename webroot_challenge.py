@@ -333,11 +333,11 @@ while True:
         last_known_location = oppo_catcher['coords']
         if not found_catcher:
             found_catcher = True
-        if distance(support['coords'], oppo_catcher['coords']) < 1760 and stunned <= 0:
-            stunned = 10
+        if distance(support['coords'], oppo_catcher['coords']) < 1760 and oppo_catcher['state'] == 1:#stunned <= 0:
+            # stunned = 10
             print("STUN " + str(oppo_catcher['id']))
         else:
-            stunned -= 1
+            # stunned -= 1
             print("MOVE " + str(oppo_catcher['coords'][0]) + " " + str(oppo_catcher['coords'][1]))
     elif not found_catcher:
         print("MOVE " + str(last_known_location[0]) + " " + str(last_known_location[1])) 
