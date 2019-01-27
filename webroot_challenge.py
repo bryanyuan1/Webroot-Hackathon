@@ -13,7 +13,12 @@ y = 9000
 
 move_from_ghost = 0
 
+stunned = 0
+
+ghost_id = None
+
 found_catcher = False
+dropped_ghost = False
 
 current_move = 0
 current_index = 0
@@ -41,6 +46,16 @@ def assign_closest(player, ghosts):
         return ghosts[0]
     else:
         return None
+        
+
+def assign_catcher(ghosts):
+    
+    if len(ghosts):
+        ghosts.sort(key=lambda x: x['stamina'])
+        return ghosts[0]
+    else:
+        return None
+
         
 def best_direction(ghost):
     x = ghost[0]
@@ -127,6 +142,9 @@ while True:
     else:
         print("MOVE " + patrol_points[current_index][0] + " " + patrol_points[current_index][1])
     
+    
+    """ LOOKS FOR CLOSEST GHOST
+    
     # CATCHER MOVEMENT #
     if catcher['state'] == 1:
         catcher_x = catcher['coords'][0]
@@ -169,31 +187,108 @@ while True:
                       not(closest_ghost['coords'][0] > 14800 and closest_ghost['coords'][1] > 7800)):
                 print("TRAP " + str(closest_ghost['id']))
     
-    
-    #if we don't find the ghost, go find the hunter!
     else:
-        #temporary stop the patroling system for catcher
+        print("MOVE " + str(hunter['coords'][0]) + " " + str(hunter['coords'][1]))
+    """    
+    
+    # CATCHER MOVEMENT # LOOKS FOR WEAKEST GHOST
+    
+    catcher_closest = assign_catcher(ghosts)
+    
+    if catcher['state'] == 1:
+        catcher_x = catcher['coords'][0]
+        catcher_y = catcher['coords'][1]
+        if my_team_id == 0:
+            if catcher_x <= 900 and catcher_y <= 900:
+                print("RELEASE")
+            else:
+                print("MOVE 500 500")
+        else:
+            if catcher_x >= 15100 and catcher_y >= 8100:
+                print("RELEASE")
+            else:
+                print("MOVE 15500 8500")
+    
+    #not carrying and find a ghost
+    elif catcher_closest:
+        # if the hunter is still firing, i will go to hunter; if the hunter finishes firing
+        # i will go there and carry! Also, the ghost should not be in the base!
+        dist_ghost = distance(catcher['coords'], catcher_closest['coords'])
+        
+        # closest_to_catcher =  assign_closest(catcher['coords'], ghosts)
+        
+        #hunter is firing
+        if catcher_closest['stamina'] > 0:
+            print("MOVE " + str(hunter['coords'][0]) + " " + str(hunter['coords'][1]))
+        
+        # hunter finishes
+        else: 
+            if dist_ghost > 1600:
+                print("MOVE " + closest_x + " " + closest_y)
+                
+            elif dist_ghost < 900:
+                #move_coords = best_direction(closest_ghost['coords'])
+                #just stop and the ghost runs for you
+                print("MOVE " + str(catcher['coords'][0]) + " " + str(catcher['coords'][1]))
+                
+            #this is when it is in catch range, and not in base
+            elif (not(catcher_closest['coords'][0] < 1200 and catcher_closest['coords'][1] < 1200) and \
+                      not(catcher_closest['coords'][0] > 14800 and catcher_closest['coords'][1] > 7800)):
+                print("TRAP " + str(catcher_closest['id']))
+    
+    else:
         print("MOVE " + str(hunter['coords'][0]) + " " + str(hunter['coords'][1]))
         
-        
+    """ FOLLOWS CATCHER
+    
     # SUPPORT MOVEMENT #
     if oppo_catcher['id'] != ():
         if not found_catcher:
             found_catcher = True
         if distance(support['coords'], oppo_catcher['coords']) < 1760:
+            if oppo_catcher['state'] == 1:
+                ghost_id = oppo_catcher['value']
+                dropped_ghost = True
+            else:
+                dropped_ghost = False
             print("STUN " + str(oppo_catcher['id']))
         else:
             print("MOVE " + str(oppo_catcher['coords'][0]) + " " + str(oppo_catcher['coords'][1]))
     elif not found_catcher:
         if my_team_id == 1:
-            print("MOVE 1000 1000")
+            print("MOVE 1500 1500")
         else:
-            print("MOVE 15000 8000")
+            print("MOVE 14500 7500")
     else:
-       if my_team_id == 1:
-            print("MOVE 1000 1000")
+        if my_team_id == 1:
+            print("MOVE 1500 1500")
         else:
-            print("MOVE 15000 8000")
+            print("MOVE 14500 7500")
+    """
+    
+    # SUPPORT MOVEMENT # FOLLOWS HUNTER
+    
+    if current_move == 10:
+        print("RADAR")
+    elif oppo_hunter['id'] != ():
+        if not found_catcher:
+            found_catcher = True
+        if distance(support['coords'], oppo_hunter['coords']) < 1760 and stunned == 0:
+            stunned = 10
+            print("STUN " + str(oppo_hunter['id']))
+        else:
+            stunned -= 1
+            print("MOVE " + str(oppo_hunter['coords'][0]) + " " + str(oppo_hunter['coords'][1]))
+    elif not found_catcher:
+        if my_team_id == 1:
+            print("MOVE 1500 1500")
+        else:
+            print("MOVE 14500 7500")
+    else:
+        if my_team_id == 1:
+            print("MOVE 1500 1500")
+        else:
+            print("MOVE 14500 7500")
     
     current_move += 1
     
