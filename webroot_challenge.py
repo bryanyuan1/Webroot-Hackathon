@@ -247,7 +247,7 @@ while True:
     
     
     # CATCHER FOLLOW CATCHER
-    closest_to_support =  assign_closest(support['coords'], ghosts)
+    closest_to_support = assign_closest(support['coords'], ghosts)
     if catcher['state'] == 1:
         catcher_x = catcher['coords'][0]
         catcher_y = catcher['coords'][1]
