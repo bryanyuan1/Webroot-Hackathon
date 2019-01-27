@@ -310,7 +310,7 @@ while True:
                   not(closest_to_support['coords'][0] > 14800 and closest_to_support['coords'][1] > 7800)):
             print("TRAP " + str(closest_to_support['id']))
         else:
-            print("MOVE " + str(catcher['coords'][0]) + " " + str(catcher['coords'][0]))
+            print("MOVE " + str(catcher['coords'][0]) + " " + str(catcher['coords'][1]))
     
     else:
         print("MOVE " + str(support['coords'][0]) + " " + str(support['coords'][1]))
