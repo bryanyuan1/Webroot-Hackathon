@@ -248,6 +248,8 @@ while True:
     
     # CATCHER FOLLOW CATCHER
     closest_to_support = assign_closest(support['coords'], ghosts)
+    lowest_stamina = assign_catcher(ghosts)
+    
     if catcher['state'] == 1:
         catcher_x = catcher['coords'][0]
         catcher_y = catcher['coords'][1]
@@ -275,6 +277,21 @@ while True:
         
         else:
             print("TRAP " + str(closest_ghost['id']))
+        
+        
+    elif lowest_stamina != None and lowest_stamina['stamina'] == 0:
+        dist_to_ls = distance(catcher['coords'], lowest_stamina['coords'])
+        best_choice = best_direction(lowest_stamina['coords'])
+        
+        if dist_to_ls > 1760:
+            print("MOVE " + str(best_choice[0]) + " " + str(best_choice[1]))
+            
+        elif dist_to_ls < 900:
+            print("MOVE " + str(best_choice[0]) + " " + str(best_choice[1]))
+        
+        else:
+            print("TRAP " + str(lowest_stamina['id']))
+        
         
     elif closest_to_support:
         dist_to_cts = distance(catcher['coords'], closest_to_support['coords'])
@@ -333,17 +350,19 @@ while True:
         last_known_location = oppo_catcher['coords']
         if not found_catcher:
             found_catcher = True
-        if distance(support['coords'], oppo_catcher['coords']) < 1760 and oppo_catcher['state'] == 1:#stunned <= 0:
-            # stunned = 10
+        if distance(support['coords'], oppo_catcher['coords']) < 1760 and oppo_catcher['state'] == 1 and \
+            stunned == 0: #stunned <= 0:
+            stunned = 21
             print("STUN " + str(oppo_catcher['id']))
         else:
-            # stunned -= 1
             print("MOVE " + str(oppo_catcher['coords'][0]) + " " + str(oppo_catcher['coords'][1]))
     elif not found_catcher:
         print("MOVE " + str(last_known_location[0]) + " " + str(last_known_location[1])) 
     else:
         print("MOVE " + str(last_known_location[0]) + " " + str(last_known_location[1])) 
     
+    if stunned > 0:
+        stunned -= 1
     
     # SUPPORT FOLLOW HUNTER
     """
