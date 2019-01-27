@@ -17,6 +17,8 @@ stunned = 0
 
 ghost_id = None
 
+last_known_location = None
+
 found_catcher = False
 dropped_ghost = False
 
@@ -271,14 +273,17 @@ while True:
     if current_move == 10:
         print("RADAR")
     elif oppo_hunter['id'] != ():
+        last_known_location = oppo_hunter['coords']
         if not found_catcher:
             found_catcher = True
-        if distance(support['coords'], oppo_hunter['coords']) < 1760 and stunned == 0:
+        if distance(support['coords'], oppo_hunter['coords']) < 1760 and stunned <= 0:
             stunned = 10
             print("STUN " + str(oppo_hunter['id']))
         else:
             stunned -= 1
             print("MOVE " + str(oppo_hunter['coords'][0]) + " " + str(oppo_hunter['coords'][1]))
+    elif last_known_location:
+        print("MOVE " + str(last_known_location[0]) + " " + str(last_known_location[1])) 
     elif not found_catcher:
         if my_team_id == 1:
             print("MOVE 1500 1500")
